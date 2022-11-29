@@ -53,5 +53,5 @@
 	"postCreateCommand": "git config --global user.name \"Your Name\" && git config --global user.email yourname@you.com"
 
 	// Uncomment to connect as a non-root user if you've added one. See https://aka.ms/vscode-remote/containers/non-root.
-	// "remoteUser": "psychnpexpert"
+	// "remoteUser": "you"
 }
