@@ -1,0 +1,116 @@
+version: '3'
+
+services:
+
+  web:
+    image: yourapp-dev
+    container_name: yourapp-web
+    build: .
+    command: >
+      sh -c "python manage.py migrate &&
+        python manage.py collectstatic --noinput &&
+        uvicorn yourapp.asgi:application --port 5111 --host 0.0.0.0 --reload
+        # python -m debugpy --wait-for-client --listen 0.0.0.0:5678 manage.py runserver 0.0.0.0:5111
+      "
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
+      - PYTHONDEVMODE=1
+      - HTTPS=on
+    ports:
+      - 5111:5111
+    volumes:
+      - .:/code
+    depends_on:
+      - db
+      - cache
+    networks:
+      - yourapp
+
+  db:
+    container_name: yourapp-db
+    image: postgres:alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=development
+    ports:
+      - 5432:5432
+    volumes:
+      - yourapp-db:/var/lib/postgresql/data
+    networks:
+      - yourapp
+
+  adminer:
+    container_name: yourapp-adminer
+    image: adminer:latest
+    restart: always
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+    networks:
+      - yourapp
+
+  cache:
+    container_name: yourapp-cache
+    image: redis:bullseye
+    restart: always
+    ports:
+      - 6379:6379
+    volumes:
+      - yourapp-cache:/data
+    networks:
+      - yourapp
+
+  rq:
+    image: yourapp-dev
+    container_name: yourapp-worker
+    build: .
+    command: python manage.py rqworker --with-scheduler
+    depends_on:
+      - cache
+    volumes:
+      - .:/code
+    environment:
+      PYTHONUNBUFFERED: 1
+      PYTHONDONTWRITEBYTECODE: 1
+      PYTHONDEVMODE: 1
+    networks:
+      - yourapp
+
+  rq_dashboard:
+    container_name: yourapp-worker-dash
+    image: eoranged/rq-dashboard
+    ports:
+      - 9181:9181
+    depends_on:
+      - rq
+    environment:
+      - RQ_DASHBOARD_REDIS_URL=redis://cache:6379?db=0
+    networks:
+      - yourapp
+
+  nginx:
+    container_name: yourapp-nginx
+    image: nginx:stable-alpine
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./certs/localhost.crt:/etc/ssl/certs/localhost.crt
+      - ./certs/localhost.key:/etc/ssl/certs/localhost.key
+    depends_on:
+      - web
+    networks:
+      - yourapp
+
+networks:
+  yourapp: null
+
+volumes:
+  yourapp-db: null
+  yourapp-cache: null

@@ -1,0 +1,18 @@
+# Deployment
+gunicorn
+uvicorn[standard]
+setuptools
+websockets
+
+# Debugging
+ipython
+debugpy
+
+# Dependencies
+Django
+psycopg2-binary
+redis
+hiredis
+django-rq
+social-auth-app-django
+httpx
