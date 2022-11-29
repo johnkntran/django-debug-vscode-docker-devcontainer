@@ -2,7 +2,7 @@
 Scaffolding to set up Django in Docker with VS Code using Dev Containers
 
 # Setup
-- Open this folder in VS Code.
+- Clone the repo and open this folder in VS Code.
 
 - You should see a dialog box pop up that says "Reopen in Container", say yes.
 <img src="yourapp/static/reopen_in_container.png">
