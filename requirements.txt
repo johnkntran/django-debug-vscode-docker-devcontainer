@@ -7,6 +7,7 @@ websockets
 # Debugging
 ipython
 debugpy
+flake8
 
 # Dependencies
 Django
