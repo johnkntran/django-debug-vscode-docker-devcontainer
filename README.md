@@ -1,5 +1,5 @@
 # django-debug-vscode-docker-devcontainer
-Scaffolding to set up Django in Docker with VS Code using Dev Containers
+Scaffolding to set up debugging for Django in Docker with VS Code using Dev Containers
 
 # Setup
 - Install [VS Code](https://code.visualstudio.com/) and the [Remote Development](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack) Extension Pack.
